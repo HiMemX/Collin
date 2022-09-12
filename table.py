@@ -5,5 +5,5 @@ class table:
         self.padding_offset = padding[0]
         self.padding_length = padding[1]
         self.offset = index[0]
-        self.length = index [1]
+        self.length = index[1]
         self.entries = entries # [[lwp, offs, length, flg, id, typ], [...], ...]
