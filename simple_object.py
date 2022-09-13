@@ -28,3 +28,5 @@ class simple_object: # Type = AF 4D 62 21
         self.name = ""
         
         self.model_class = None # Uses a class from modelviewer.py
+        
+        self.islight = (type_ == b"\x3F\xEC\xFD\xEA")

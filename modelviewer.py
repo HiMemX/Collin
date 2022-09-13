@@ -65,13 +65,14 @@ CTRL+V to paste model
             helptext.text = "TAB for info"
         
         if urs.held_keys["c"] and urs.held_keys["control"] and selected_object != None and models[selected_object] != None:
-            clipboard = models[selected_object].index
+            if models[selected_object].type_ != b"\x3F\xEC\xFD\xEA":
+                clipboard = models[selected_object].index
             
         if urs.held_keys["v"] and urs.held_keys["control"] and selected_object != None and models[selected_object] != None and clipboard != None:
-            if models[selected_object].type_ == b"\x0B\x54\xBB\x17" and models[clipboard].anim_id != b"\x00\x00\x00\x00\x00\x00\x00\x00":
+            if (models[selected_object].type_ == b"\x0B\x54\xBB\x17" and models[clipboard].anim_id != b"\x00\x00\x00\x00\x00\x00\x00\x00"):
                 debugstream.text = "You can't paste this on here!"
                 fade_out_timer = fade_out_timer_set
-                
+            
             else:
                 models[selected_object].model_id = models[clipboard].model_id
                 models[selected_object].anim_id = models[clipboard].anim_id
@@ -108,7 +109,7 @@ CTRL+V to paste model
                 try:
                     fade_out_timer = fade_out_timer_set
                     view_model(*models_to_load[0])
-                    debugstream.text = f"{models_to_load[0][-2]} loaded"
+                    debugstream.text = f"{models_to_load[0][-3]} loaded"
                     fade_out_timer = fade_out_timer_set
                     
                 except:
@@ -208,7 +209,7 @@ class submesh(urs.Entity):
         
 
 class modelclass(urs.Entity):
-    def __init__(self, model, texture_, position, rotation, scale, mass, friction, index, anim_id, type_, name, model_id, collider):
+    def __init__(self, model, texture_, position, rotation, scale, mass, friction, index, anim_id, type_, name, model_id, collider, islight):
         super().__init__(
             parent = urs.scene,
             anim_id = anim_id,
@@ -219,7 +220,7 @@ class modelclass(urs.Entity):
             meshes = [],
             #texture = os.path.abspath(os.getcwd())+"\\textures\\"+str(index).zfill(4)+str(test).zfill(4)+".png",
             collider = collider,
-            visible_self = False,
+            visible_self = islight,
             color = urs.color.white,
             position = [position[0], position[1], position[2]],
             rotation = rotation,
@@ -230,7 +231,8 @@ class modelclass(urs.Entity):
             double_sided = True,
             selected = False,
             index = index,
-            highlight_color = urs.color.color(100, 0.5, 1)
+            highlight_color = urs.color.color(100, 0.5, 1),
+            islight = islight
             )
     
     def select(self):
@@ -262,10 +264,11 @@ class modelclass(urs.Entity):
         friction_slider.value = models[selected_object].friction
         
     def deselect(self):
+        
         self.selected = False
         for mesh in self.meshes:
             mesh.color = urs.color.white
-         
+        #print("deselected!") 
           
     def input(self, key):
         if self.hovered:
@@ -428,10 +431,19 @@ def init():
     helptext = urs.Text(text="TAB for info", position=(-0.7, -0.46, 0), origin=(-0.5, -0.5), font=r"Krabby Patty.ttf")
     #grid = urs.Entity(model=urs.Grid(100, 100, mode='line', thickness=1), scale = (500, 500, 500), rotation = (90, 0, 0), color = urs.color.gray)
        
-def view_model(verts_in, tris, texture, texture_ids, uvs_in, position, rotation, scale, mass, friction, index, size_divisor, anim_id, type_, name, model_id):
+def view_model(verts_in, tris, texture, texture_ids, uvs_in, position, rotation, scale, mass, friction, index, size_divisor, anim_id, type_, name, model_id, islight):
     global models
     orbit.position = position
     orbit.rotation = (rotation[0]-25, rotation[1]+45, rotation[2])
+    
+    if islight:
+        #collider = [mesh, "sphere"][len(temp_verts) > 2000]
+        collider = "mesh"
+        print(position)
+        curr_model = modelclass(model = "cone", texture_ = texture, position = position, scale = scale, rotation = rotation, mass = mass, friction = friction, index = index, anim_id = anim_id, type_ = type_, name = name, model_id = model_id, collider=collider, islight=islight)
+        print("doubleyes")
+        models.append(curr_model)
+        return
     
     #curr_model = modelclass(model=None, texture_ = texture, position = position, scale = scale, rotation = rotation, mass = mass, friction = friction, index = index, anim_id = anim_id, type_ = type_, name = name, model_id = model_id)
     # ----
@@ -461,9 +473,8 @@ def view_model(verts_in, tris, texture, texture_ids, uvs_in, position, rotation,
     mesh = urs.Mesh(vertices=temp_verts, triangles=tris__, mode='triangle')
     #collider = [mesh, "sphere"][len(temp_verts) > 2000]
     collider = "mesh"
-    curr_model = modelclass(model = mesh, texture_ = texture, position = position, scale = scale, rotation = rotation, mass = mass, friction = friction, index = index, anim_id = anim_id, type_ = type_, name = name, model_id = model_id, collider=collider)
+    curr_model = modelclass(model = mesh, texture_ = texture, position = position, scale = scale, rotation = rotation, mass = mass, friction = friction, index = index, anim_id = anim_id, type_ = type_, name = name, model_id = model_id, collider=collider, islight=islight)
     # -----
-    
     
     for mdl in range(len(verts_in)):
         sizex = 2**size_divisor[mdl][0]
@@ -561,6 +572,11 @@ def view_scene(archive):
         faces = []
         texture = []
         raw_uvs = []
+        
+        if archive.simple_objects[index].islight:
+            models_to_load.append([verts, faces, texture, archive.simple_objects[index].texture_ids, raw_uvs, archive.simple_objects[index].position, archive.simple_objects[index].rotation, archive.simple_objects[index].scale, archive.simple_objects[index].mass, archive.simple_objects[index].friction, index, archive.simple_objects[index].size_divisor, archive.simple_objects[index].anim_id, archive.simple_objects[index].type, archive.simple_objects[index].name, archive.simple_objects[index].model_id, archive.simple_objects[index].islight])
+            continue
+        
         for x in range(len(archive.simple_objects[index].model)):
             break_flag = False
             for text in known_models:
@@ -650,6 +666,6 @@ def view_scene(archive):
         
         #fin_texture = 
         #for text in texture: 
-        models_to_load.append([verts, faces, texture, archive.simple_objects[index].texture_ids, raw_uvs, archive.simple_objects[index].position, archive.simple_objects[index].rotation, archive.simple_objects[index].scale, archive.simple_objects[index].mass, archive.simple_objects[index].friction, index, archive.simple_objects[index].size_divisor, archive.simple_objects[index].anim_id, archive.simple_objects[index].type, archive.simple_objects[index].name, archive.simple_objects[index].model_id])
+        models_to_load.append([verts, faces, texture, archive.simple_objects[index].texture_ids, raw_uvs, archive.simple_objects[index].position, archive.simple_objects[index].rotation, archive.simple_objects[index].scale, archive.simple_objects[index].mass, archive.simple_objects[index].friction, index, archive.simple_objects[index].size_divisor, archive.simple_objects[index].anim_id, archive.simple_objects[index].type, archive.simple_objects[index].name, archive.simple_objects[index].model_id, archive.simple_objects[index].islight])
     
     load_flag = True

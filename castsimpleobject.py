@@ -8,6 +8,8 @@ def save(file, offset, rotation_data, position_data, scale_data, mass_data, fric
     bytes_to_write += file.read(offset-file.tell())
     bytes_to_write += i.id; file.read(0x08)
     
+    
+    
     if i.type == b"\xAF\x4D\x62\x21" or i.type == b"\x9D\x5F\x55\x0F" or i.type == b"\x42\xD9\x0B\xD1":
         bytes_to_write += file.read(0x18)
             
@@ -113,6 +115,14 @@ def save(file, offset, rotation_data, position_data, scale_data, mass_data, fric
         bytes_to_write += rotation_data; file.read(0x18)
         
            
+    if i.type == b"\x3F\xEC\xFD\xEA":
+        bytes_to_write += file.read(0x88)
+        
+        bytes_to_write += position_data
+        bytes_to_write += scale_data[:4]
+        bytes_to_write += rotation_data; file.read(0x1C)
+        
+    
         
     return bytes_to_write
                 
@@ -126,6 +136,26 @@ def save(file, offset, rotation_data, position_data, scale_data, mass_data, fric
                 
                 
 def cast(file, typeid, xy, yi, ii, i):
+    
+    if typeid == b"\x3F\xEC\xFD\xEA":
+        file.read(0x90)
+        
+        position = (pyhotools.byte_to_float(file.read(0x04)), pyhotools.byte_to_float(file.read(0x04)), -pyhotools.byte_to_float(file.read(0x04)))
+        radius = (pyhotools.byte_to_float(file.read(0x04)))
+        scale = (radius, radius, radius)
+        rotation = (pyhotools.byte_to_float(file.read(0x04))*180/math.pi, pyhotools.byte_to_float(file.read(0x04))*180/math.pi, pyhotools.byte_to_float(file.read(0x04))*180/math.pi)
+        rotation = (rotation[1], 180-rotation[0], rotation[2])
+        
+        model_id = b"\x00\x00\x00\x00\x00\x00\x00\x00"
+        
+        anim_id = b"\x00\x00\x00\x00\x00\x00\x00\x00"
+            
+        mass = 0
+        friction = 0
+        
+        return simple_object.simple_object([xy, yi, ii], i[4], typeid, position, rotation, scale, model_id, anim_id, mass, friction)
+    
+    
     if typeid == b"\xAF\x4D\x62\x21" or typeid == b"\x9D\x5F\x55\x0F" or typeid == b"\x42\xD9\x0B\xD1":
         file.read(0x20)
         rotation = (pyhotools.byte_to_float(file.read(0x04))*180/math.pi, pyhotools.byte_to_float(file.read(0x04))*180/math.pi, pyhotools.byte_to_float(file.read(0x04))*180/math.pi)

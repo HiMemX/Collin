@@ -107,6 +107,9 @@ class ho_archive:
         with open(self.path, "rb") as file:
             known_ids = []
             for si, simp in enumerate(self.simple_objects):
+                
+                if simp.islight: continue
+                
                 # Now simp.model_id will be, you guessed it, the model id.
                 # This piece of code is gonna go through all tables and search for that ID.
                 # Then it will do the same for the ids in those assets.

@@ -12,4 +12,5 @@ types = {
     b"\x50\x5D\xD6\xA4": "Fountain", # IMPLEMENTED
     b"\xFD\x5F\x1E\xC7": "BungeeBall", # IMPLEMENTED
     b"\x63\x37\x8F\xE3": "InflatablePlatform", # IMPLEMENTED
+    b"\x3F\xEC\xFD\xEA": "Light"
 }
