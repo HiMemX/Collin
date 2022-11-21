@@ -1,0 +1,93 @@
+{
+ "version": "auto-py-to-exe-configuration_v1",
+ "pyinstallerOptions": [
+  {
+   "optionDest": "noconfirm",
+   "value": true
+  },
+  {
+   "optionDest": "filenames",
+   "value": "C:/Users/felix/Desktop/Projects/Collin/frame.py"
+  },
+  {
+   "optionDest": "onefile",
+   "value": false
+  },
+  {
+   "optionDest": "console",
+   "value": false
+  },
+  {
+   "optionDest": "icon_file",
+   "value": "C:/Users/felix/Desktop/Projects/Collin/couch.ico"
+  },
+  {
+   "optionDest": "ascii",
+   "value": false
+  },
+  {
+   "optionDest": "clean_build",
+   "value": false
+  },
+  {
+   "optionDest": "strip",
+   "value": false
+  },
+  {
+   "optionDest": "noupx",
+   "value": false
+  },
+  {
+   "optionDest": "uac_admin",
+   "value": false
+  },
+  {
+   "optionDest": "uac_uiaccess",
+   "value": false
+  },
+  {
+   "optionDest": "win_private_assemblies",
+   "value": false
+  },
+  {
+   "optionDest": "win_no_prefer_redirects",
+   "value": false
+  },
+  {
+   "optionDest": "bootloader_ignore_signals",
+   "value": false
+  },
+  {
+   "optionDest": "disable_windowed_traceback",
+   "value": false
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/felix/Desktop/Projects/Collin;Collin/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/felix/AppData/Roaming/Python/Python39/site-packages/panda3d-1.10.10.dist-info;panda3d-1.10.10.dist-info/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/felix/AppData/Roaming/Python/Python39/site-packages/panda3d;panda3d/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/felix/AppData/Roaming/Python/Python39/site-packages/direct;direct/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/felix/AppData/Local/Programs/Python/Python39/Lib/site-packages/ursina;ursina/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/felix/AppData/Local/Programs/Python/Python39/Lib/site-packages/ursina-5.0.0.dist-info;ursina-5.0.0.dist-info/"
+  }
+ ],
+ "nonPyinstallerOptions": {
+  "increaseRecursionLimit": true,
+  "manualArguments": ""
+ }
+}
